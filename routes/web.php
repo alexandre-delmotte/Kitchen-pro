@@ -4,6 +4,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PlannedMealController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ShoppingListController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +26,9 @@ Route::resources([
 ]);
 Route::resource('planning', PlannedMealController::class)
     ->only(['index', 'store', 'destroy']);
+
+Route::resource('list', ShoppingListController::class)
+    ->only(['index', 'store', 'show', 'destroy']);
 
 Route::post('/recipes/{recipe}/ingredients', [RecipeController::class, 'addIngredient'])->name('recipes.ingredients.store');
 

@@ -27,10 +27,33 @@
 
         @if (session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
-                {{ session('success') }}
-            </div>
+                {!! session('success') !!} </div>
+        @endif
+        @if ($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6">
+                    <ul class="list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
         @endif
 
+        <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6 mb-8">
+            <form action="{{ route('list.store') }}" method="post" class="flex flex-wrap gap-4 items-end">
+                @csrf
+                <div>
+                    <x-input-label for="start_date" value="De" />
+                    <x-text-input id="start_date" class="block mt-1 w-full" type="date" name="start_date" required />
+                </div>
+                <div>
+                    <x-input-label for="end_date" value="à" />
+                    <x-text-input id="end_date" class="block mt-1 w-full" type="date" name="end_date" required />
+                </div>
+
+                <x-primary-button>générer la liste</x-primary-button>
+            </form>
+        </div>
         <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6 mb-8">
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Ajouter un repas au menu</h3>
 
