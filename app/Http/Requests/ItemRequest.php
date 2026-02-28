@@ -25,7 +25,7 @@ class ItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            ['required', 'string', 'max:255', Rule::unique('items')->ignore($this->route('item'))],
+            'name' => ['required', 'string', 'max:255', Rule::unique('items')->ignore($this->route('item'))],
             'category' =>['required', Rule::enum(ItemCategory::class)],
             'stock_quantity' => ['nullable','numeric', 'min:0'],
             'unit' => ['required', Rule::enum(Unit::class)],

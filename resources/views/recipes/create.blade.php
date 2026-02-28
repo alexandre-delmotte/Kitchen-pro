@@ -40,7 +40,7 @@
 
             <div>
                 <x-input-label for="prep_time_minutes" :value="__('Temps de préparation (min)')" />
-                <x-text-input id="prep_time_minutes" class="block mt-1 w-full" type="number" name="prep_time_minutes" :value="old('prep_time_minutes')" required />
+                <x-text-input id="prep_time_minutes" class="block mt-1 w-full" type="number" name="prep_time_minutes" :value="old('prep_time_minutes')"/>
                 <x-input-error :messages="$errors->get('prep_time_minutes')" class="mt-2" />
             </div>
 

@@ -29,12 +29,17 @@ class ShoppingListController extends Controller
             'start_date'=> ['required', Rule::date()->format('Y-m-d')->afterOrEqual(today())],
             'end_date'=> ['required', Rule::date()->format('Y-m-d')->afterOrEqual('start_date')],
         ]);
+
         $shoppingList = ShoppingList::create($validated);
+
         $plannedMeals = PlannedMeal::with('recipe.items')
-            ->whereBetween('date',[$request->start_date,$request->end_date])
+            ->whereBetween('date', [$request->start_date, $request->end_date])
             ->orderBy('date')
             ->get();
-         $lists = [];
+
+        $lists = [];
+
+        // BOUCLE 1 : On calcule le BESOIN TOTAL (sans toucher au stock)
         foreach ($plannedMeals as $plannedMeal)
         {
             $items = $plannedMeal->recipe->items;
@@ -43,26 +48,39 @@ class ShoppingListController extends Controller
             {
                 $calcul = $item->pivot->quantity * ($plannedMeal->portions / $plannedMeal->recipe->portions);
 
-                if (isset($lists[$item->id]))
-                {
-                    $lists[$item->id] += $calcul;
-
-                }else{
-                    $lists[$item->id] = $calcul;
+                if (isset($lists[$item->id])) {
+                    $lists[$item->id]['quantity'] += $calcul; // On additionne le besoin
+                } else {
+                    $lists[$item->id] = [
+                        'item' => $item, // On stocke l'objet entier pour avoir le stock plus tard !
+                        'quantity' => $calcul // Le besoin initial
+                    ];
                 }
             }
         }
-        foreach ($lists as $key => $value)
+
+        // BOUCLE 2 : On soustrait le stock UNE SEULE FOIS !
+        foreach ($lists as $key => $data)
         {
-            $shoppingList->listItems()->create([
-                'generated' => true,
-                'done' => false,
-                'shopping_list_id' => $shoppingList->id,
-                'item_id' => $key,
-                'quantity' => $value,
+            $item = $data['item'];
+            $totalNeeded = $data['quantity'];
+
+            // Le calcul final magique
+            $toBuy = $totalNeeded - $item->stock_quantity;
+
+            // Si ce qu'on doit acheter est strictement supérieur à 0, on sauvegarde !
+            if ($toBuy > 0) {
+                $shoppingList->listItems()->create([
+                    'generated' => true,
+                    'done' => false,
+                    'shopping_list_id' => $shoppingList->id,
+                    'item_id' => $item->id,
+                    'quantity' => $toBuy,
                 ]);
+            }
         }
-        return to_route('planning.index')->with('success', 'La list a bien été crée <a href="' . route('list.show',$shoppingList) . '">voir la liste de courses</a>');
+
+        return to_route('planning.index')->with('success', 'La liste a bien été créée <a href="' . route('list.show', $shoppingList) . '" class="font-bold underline text-green-800 hover:text-green-900 ml-2">Voir la liste de courses &rarr;</a>');
     }
 
     /**

@@ -66,9 +66,9 @@ class PlannedMealController extends Controller
         return back()->with('success', 'Repas ajouté au planning !');
     }
 
-    public function destroy(PlannedMeal $plannedMeal) // N'oublie pas l'import de PlannedMeal
+    public function destroy(PlannedMeal $planning) // N'oublie pas l'import de PlannedMeal
     {
-        $plannedMeal->delete();
+        $planning->delete();
 
         return back()->with('success', 'Repas retiré du planning.');
     }

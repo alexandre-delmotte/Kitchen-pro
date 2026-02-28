@@ -61,11 +61,19 @@
                     @if($recipe->items->count() > 0)
                         <ul class="space-y-2">
                             @foreach($recipe->items as $ingredient)
-                                <li class="flex justify-between items-center text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
+                                <li class="group relative flex justify-between items-center text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 p-2 rounded pr-8">
                                     <span>{{ $ingredient->name }}</span>
                                     <span class="font-bold text-sm bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded">
-                                        {{ $ingredient->pivot->quantity }} {{ $ingredient->unit }}
+                                          {{ $ingredient->pivot->quantity }} {{ $ingredient->unit }}
                                     </span>
+
+                                    <form action="{{ route('recipes.ingredients.remove', ['recipe' => $recipe, 'ingredient' => $ingredient]) }}" method="POST" class="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-500 hover:text-red-700" title="Retirer l'ingrédient">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
+                                    </form>
                                 </li>
                             @endforeach
                         </ul>

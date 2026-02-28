@@ -31,5 +31,5 @@ Route::resource('list', ShoppingListController::class)
     ->only(['index', 'store', 'show', 'destroy']);
 
 Route::post('/recipes/{recipe}/ingredients', [RecipeController::class, 'addIngredient'])->name('recipes.ingredients.store');
-
+Route::delete('/recipes/{recipe}/ingredients/{ingredient}', [RecipeController::class, 'removeIngredient'])->name('recipes.ingredients.remove');
 require __DIR__.'/auth.php';

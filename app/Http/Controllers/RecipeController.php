@@ -110,4 +110,9 @@ class RecipeController extends Controller
         // 3. Retour à la page précédente
         return back()->with('success', 'Ingrédient ajouté avec succès !');
     }
+    public function removeIngredient(Recipe $recipe, Item $ingredient)
+    {
+        $recipe->items()->detach($ingredient->id);
+        return back()->with('success', 'La recette a été supprimée définitivement.');
+    }
 }
